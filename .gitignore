@@ -2,5 +2,6 @@
 /_ReSharper.Ash/
 /_NCrunch_Ash.NET/
 /_ReSharper.Ash.NET/
-/*.suo
+*.suo
 /*.NET.ncrunchsolution.user
+packages/

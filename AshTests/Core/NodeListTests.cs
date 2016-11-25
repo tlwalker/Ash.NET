@@ -31,7 +31,7 @@ namespace Net.RichardLord.AshTests.Core
 			var mockNode = new MockNode();
 			_nodes.NodeAdded += delegate { eventFired = true; };
 			_nodes.Add(mockNode);
-            Assert.IsTrue(eventFired);
+            Assert.That(eventFired, Is.True);
 		}
 		
         [Test]
@@ -42,7 +42,7 @@ namespace Net.RichardLord.AshTests.Core
             _nodes.Add(mockNode);
             _nodes.NodeRemoved += delegate { eventFired = true; };
             _nodes.Remove(mockNode);
-            Assert.IsTrue(eventFired);
+            Assert.That(eventFired, Is.True);
         }
 		
         [Test]
@@ -61,7 +61,7 @@ namespace Net.RichardLord.AshTests.Core
                 var index = nodeArray.IndexOf(node);
                 nodeArray.RemoveAt(index);
             }
-            Assert.AreEqual(0, nodeArray.Count);
+            Assert.That(nodeArray, Is.Empty);
         }
 		
         [Test]
@@ -85,7 +85,7 @@ namespace Net.RichardLord.AshTests.Core
                     _nodes.Remove(node);
                 }
             }
-            Assert.AreEqual(0, nodeArray.Count);
+            Assert.That(nodeArray, Is.Empty);
         }
 		
         [Test]
@@ -109,7 +109,7 @@ namespace Net.RichardLord.AshTests.Core
                     _nodes.Remove(node.Next);
                 }
             }
-            Assert.AreEqual(1, nodeArray.Count);
+            Assert.That(nodeArray.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace Net.RichardLord.AshTests.Core
             Node signalNode = null;
             _nodes.NodeAdded += node => signalNode = node;
             _nodes.Add(_tempNode);
-            Assert.AreSame(_tempNode, signalNode);
+            Assert.That(signalNode, Is.SameAs(_tempNode));
         }
 		
         [Test]
@@ -128,7 +128,7 @@ namespace Net.RichardLord.AshTests.Core
             _nodes.Add(_tempNode);
             _nodes.NodeRemoved += node => signalNode = node;
             _nodes.Remove(_tempNode);
-            Assert.AreSame(_tempNode, signalNode);
+            Assert.That(signalNode, Is.SameAs(_tempNode));
         }
 		
         [Test]
@@ -142,7 +142,7 @@ namespace Net.RichardLord.AshTests.Core
             _nodes.Add(node3);
             var expected = new List<Node> { node1, node2, node3 };
             var actual = new List<Node> { _nodes.Head, _nodes.Head.Next, _nodes.Tail };
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 		
         [Test]
@@ -155,7 +155,7 @@ namespace Net.RichardLord.AshTests.Core
             _nodes.Swap(node1, node2);
             var expected = new List<Node> { node2, node1 };
             var actual = new List<Node> { _nodes.Head, _nodes.Tail };
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 		
         [Test]
@@ -172,7 +172,7 @@ namespace Net.RichardLord.AshTests.Core
             _nodes.Swap(node2, node3);
             var expected = new List<Node> { node1, node3, node2, node4 };
             var actual = new List<Node> { _nodes.Head, _nodes.Head.Next, _nodes.Tail.Previous, _nodes.Tail };
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 		
         [Test]
@@ -191,7 +191,7 @@ namespace Net.RichardLord.AshTests.Core
             _nodes.Swap(node2, node4);
             var expected = new List<Node> { node1, node4, node3, node2, node5 };
             var actual = new List<Node> { _nodes.Head, _nodes.Head.Next, _nodes.Head.Next.Next, _nodes.Tail.Previous, _nodes.Tail };
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 		
         [Test]
@@ -206,7 +206,7 @@ namespace Net.RichardLord.AshTests.Core
             _nodes.Swap(node1, node3);
             var expected = new List<Node> { node3, node2, node1 };
             var actual = new List<Node> { _nodes.Head, _nodes.Head.Next, _nodes.Tail };
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
         class MockNode : Node {}

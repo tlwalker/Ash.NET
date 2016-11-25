@@ -27,7 +27,7 @@ namespace Net.RichardLord.AshTests.Core
 		{
 			var component = new MockComponent();
 			var e = _entity.Add(component);
-		    Assert.AreSame(_entity, e);
+		    Assert.That(_entity, Is.SameAs(e));
 		}
 
         [Test]
@@ -35,7 +35,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             var component = new MockComponent();
             _entity.Add(component);
-            Assert.AreSame(_entity.Get(typeof(MockComponent)), component);
+            Assert.That(_entity.Get(typeof(MockComponent)), Is.SameAs(component));
         }
 
         [Test]
@@ -45,8 +45,8 @@ namespace Net.RichardLord.AshTests.Core
             _entity.Add(component1);
             var component2 = new MockComponent2();
             _entity.Add(component2);
-            Assert.AreSame(_entity.Get(typeof(MockComponent)), component1);
-            Assert.AreSame(_entity.Get(typeof(MockComponent2)), component2);
+            Assert.That(_entity.Get(typeof(MockComponent)), Is.SameAs(component1));
+            Assert.That(_entity.Get(typeof(MockComponent2)), Is.SameAs(component2));
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace Net.RichardLord.AshTests.Core
             _entity.Add(component1);
             var component2 = new MockComponent();
             _entity.Add(component2);
-            Assert.AreEqual(_entity.Get(typeof(MockComponent)), component2);
+            Assert.That(component2, Is.EqualTo(_entity.Get(typeof(MockComponent))));
         }
 
         [Test]
@@ -66,8 +66,8 @@ namespace Net.RichardLord.AshTests.Core
             _entity.Add(component1);
             var component2 = new MockComponentExtended();
             _entity.Add(component2);
-            Assert.AreEqual(_entity.Get(typeof(MockComponent)), component1);
-            Assert.AreEqual(_entity.Get(typeof(MockComponentExtended)), component2);
+            Assert.That(component1,Is.EqualTo(_entity.Get(typeof(MockComponent))));
+            Assert.That(component2, Is.EqualTo(_entity.Get(typeof(MockComponentExtended))));
         }
 
         [Test]
@@ -75,13 +75,13 @@ namespace Net.RichardLord.AshTests.Core
         {
             var component = new MockComponentExtended();
             _entity.Add(component, typeof(MockComponent));
-            Assert.AreEqual(_entity.Get(typeof(MockComponent)), component);
+            Assert.That(component, Is.EqualTo(_entity.Get(typeof(MockComponent))));
         }
 
         [Test]
         public void GetReturnNullIfNoComponent()
         {
-            Assert.IsNull(_entity.Get(typeof(MockComponent)));
+            Assert.That(_entity.Get(typeof(MockComponent)), Is.Null);
         }
 
         [Test]
@@ -92,21 +92,21 @@ namespace Net.RichardLord.AshTests.Core
             var component2 = new MockComponent2();
             _entity.Add(component2);
             var all = _entity.GetAll();
-            Assert.AreEqual(new List<object> { component1, component2 }, all);
+            Assert.That(all, Is.EquivalentTo(new List<object> { component1, component2 }));
         }
 
         [Test]
         public void HasComponentIsFalseIfComponentTypeNotPresent()
         {
             _entity.Add(new MockComponent2());
-            Assert.IsFalse(_entity.Has(typeof(MockComponent)));
+            Assert.That(_entity.Has(typeof(MockComponent)), Is.False);
         }
 
         [Test]
         public void HasComponentIsTrueIfComponentTypeIsPresent()
         {
             _entity.Add(new MockComponent());
-            Assert.IsTrue(_entity.Has(typeof(MockComponent)));
+            Assert.That(_entity.Has(typeof(MockComponent)), Is.True);
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace Net.RichardLord.AshTests.Core
             var component = new MockComponent();
             _entity.Add(component);
             _entity.Remove(typeof(MockComponent));
-            Assert.IsFalse(_entity.Has(typeof(MockComponent)));
+            Assert.That(_entity.Has(typeof(MockComponent)), Is.False);
         }
 
         [Test]
@@ -125,7 +125,7 @@ namespace Net.RichardLord.AshTests.Core
             var component = new MockComponent();
             _entity.ComponentAdded += (entity, componentType) => eventFired = true;
             _entity.Add(component);
-            Assert.IsTrue(eventFired);
+            Assert.That(eventFired, Is.True);
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace Net.RichardLord.AshTests.Core
             _entity.Add(component);
             _entity.ComponentRemoved += (entity, componentType) => eventFired = true;
             _entity.Remove(typeof(MockComponent));
-            Assert.IsTrue(eventFired);
+            Assert.That(eventFired, Is.True);
         }
 
         [Test]
@@ -146,7 +146,7 @@ namespace Net.RichardLord.AshTests.Core
             var component = new MockComponent();
             _entity.ComponentAdded += (entity, componentType) => type = componentType;
             _entity.Add(component);
-            Assert.AreEqual(typeof(MockComponent), type);
+            Assert.That(type, Is.TypeOf<MockComponent>());
         }
 
         [Test]
@@ -157,7 +157,7 @@ namespace Net.RichardLord.AshTests.Core
             _entity.ComponentAdded += 
                 (entity, componentType) => value = ((MockComponent)entity.Get(componentType)).Value;
             _entity.Add(component);
-            Assert.AreEqual(10, value);
+            Assert.That(value, Is.EqualTo(10));
         }
 
         [Test]
@@ -168,7 +168,7 @@ namespace Net.RichardLord.AshTests.Core
             _entity.ComponentRemoved += (entity, componentType) => type = componentType;
             _entity.Add(component);
             _entity.Remove(typeof(MockComponent));
-            Assert.AreEqual(typeof(MockComponent), type);
+            Assert.That(type, Is.TypeOf<MockComponent>());
         }
 
         [Test]
@@ -179,7 +179,7 @@ namespace Net.RichardLord.AshTests.Core
                 (entity, componentType) => component = (MockComponent)entity.Get(componentType);
             _entity.Add(component);
             _entity.Remove(typeof (MockComponent));
-            Assert.IsNull(component);
+            Assert.That(component, Is.Null);
         }
 
         [Test]
@@ -187,7 +187,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             _entity.Add(new MockComponent());
             var clone = _entity.Clone();
-            Assert.AreNotEqual(clone, _entity);
+            Assert.That(clone, Is.Not.SameAs(_entity));
         }
 
         [Test]
@@ -195,7 +195,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             _entity.Add(new MockComponent());
             var clone = _entity.Clone();
-            Assert.IsTrue(clone.Has(typeof(MockComponent)));
+            Assert.That(clone.Has(typeof(MockComponent)), Is.True);
         }
 
         [Test]
@@ -203,7 +203,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             _entity.Add(new MockComponent());
             var clone = _entity.Clone();
-            Assert.AreNotEqual(_entity.Get(typeof(MockComponent)), clone.Get(typeof(MockComponent)));
+            Assert.That(clone.Get(typeof(MockComponent)), Is.Not.SameAs(_entity.Get(typeof(MockComponent))));
         }
 
         [Test]
@@ -212,7 +212,7 @@ namespace Net.RichardLord.AshTests.Core
             var component = new MockComponent {Value = 5};
             _entity.Add(component);
             var clone = _entity.Clone();
-            Assert.AreEqual(5, clone.Get<MockComponent>(typeof(MockComponent)).Value);
+            Assert.That(clone.Get<MockComponent>(typeof(MockComponent)).Value, Is.EqualTo(5));
         }
 	}
 

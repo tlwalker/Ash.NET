@@ -31,7 +31,7 @@ namespace Net.RichardLord.AshTests.Core
 		public void TestNodeListIsInitiallyEmpty()    
 		{
 			var nodes = _family.NodeList;
-			Assert.IsNull(nodes.Head);
+			Assert.That(nodes.Head, Is.Null);
 		}
 		
 		[Test]
@@ -41,7 +41,7 @@ namespace Net.RichardLord.AshTests.Core
 			var entity = new Entity();
 			entity.Add(new Point());
 			_family.NewEntity(entity);
-			Assert.AreSame(entity, nodes.Head.Entity);
+			Assert.That(nodes.Head.Entity, Is.SameAs(entity));
 		}
 
         [Test]
@@ -51,7 +51,7 @@ namespace Net.RichardLord.AshTests.Core
             entity.Add(new Point());
             _family.NewEntity(entity);
             var nodes = _family.NodeList;
-            Assert.AreSame(entity, nodes.Head.Entity);
+            Assert.That(nodes.Head.Entity, Is.SameAs(entity));
         }
 		
         [Test]
@@ -62,7 +62,7 @@ namespace Net.RichardLord.AshTests.Core
             entity.Add(point);
             _family.NewEntity(entity);
             var nodes = _family.NodeList;
-            Assert.AreEqual(point, ((MockNode)nodes.Head).Point);
+            Assert.That(((MockNode)nodes.Head).Point, Is.EqualTo(point));
         }
 
         [Test]
@@ -73,6 +73,7 @@ namespace Net.RichardLord.AshTests.Core
             entity.Add(new Point());
             _family.ComponentAddedToEntity(entity, typeof(Point));
             Assert.AreSame(entity, nodes.Head.Entity);
+            Assert.That(nodes.Head.Entity, Is.SameAs(entity));
         }
 
         [Test]
@@ -81,7 +82,7 @@ namespace Net.RichardLord.AshTests.Core
             var entity = new Entity();
             _family.NewEntity(entity);
             var nodes = _family.NodeList;
-            Assert.IsNull(nodes.Head);
+            Assert.That(nodes.Head, Is.Null);
         }
 
         [Test]
@@ -91,7 +92,7 @@ namespace Net.RichardLord.AshTests.Core
             entity.Add(new Matrix());
             _family.ComponentAddedToEntity(entity, typeof(Matrix));
             var nodes = _family.NodeList;
-            Assert.IsNull(nodes.Head);
+            Assert.That(nodes.Head, Is.Null);
         }
 
         [Test]
@@ -102,7 +103,7 @@ namespace Net.RichardLord.AshTests.Core
             _family.NewEntity(entity);
             var nodes = _family.NodeList;
             _family.RemoveEntity(entity);
-            Assert.IsNull(nodes.Head);
+            Assert.That(nodes.Head, Is.Null);
         }
 
         [Test]
@@ -113,7 +114,7 @@ namespace Net.RichardLord.AshTests.Core
             _family.NewEntity(entity);
             _family.RemoveEntity(entity);
             var nodes = _family.NodeList;
-            Assert.IsNull(nodes.Head);
+            Assert.That(nodes.Head, Is.Null);
         }
 
         [Test]
@@ -125,7 +126,7 @@ namespace Net.RichardLord.AshTests.Core
             entity.Remove(typeof(Point));
             _family.ComponentRemovedFromEntity(entity, typeof(Point));
             var nodes = _family.NodeList;
-            Assert.IsNull(nodes.Head);
+            Assert.That(nodes.Head, Is.Null);
         }
 
         [Test]
@@ -148,7 +149,7 @@ namespace Net.RichardLord.AshTests.Core
                 results.Add(entities.Contains(node.Entity));
             }
 
-            Assert.AreEqual(new List<bool> {true, true, true, true, true}, results);
+            Assert.That(results, Is.All.True);
         }
 
         [Test]
@@ -169,7 +170,7 @@ namespace Net.RichardLord.AshTests.Core
             {
                 entities.RemoveAt(entities.IndexOf(node.Entity));
             }
-            Assert.AreEqual(0, entities.Count);
+            Assert.That(entities, Is.Empty);
         }
 
         [Test]
@@ -180,7 +181,7 @@ namespace Net.RichardLord.AshTests.Core
             _family.NewEntity(entity);
             var nodes = _family.NodeList;
             _family.CleanUp();
-            Assert.IsNull(nodes.Head);
+            Assert.That(nodes.Head, Is.Null);
         }
 
         [Test]
@@ -198,7 +199,7 @@ namespace Net.RichardLord.AshTests.Core
             var nodes = _family.NodeList;
             var node = nodes.Head.Next;
             _family.CleanUp();
-            Assert.IsNull(node.Next);
+            Assert.That(node.Next, Is.Null);
         }
     
         class MockNode : Node

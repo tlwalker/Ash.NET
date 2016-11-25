@@ -31,7 +31,7 @@ namespace Net.RichardLord.AshTests.Core
             var result = new Tuple<string, IGame>(null, null);
             var system = new MockSystem((sys, action, game) => result = new Tuple<string, IGame>(action, (IGame) game));
             _game.AddSystem(system, 0);
-            Assert.AreEqual(new Tuple<string, IGame>("added", _game), result);
+            Assert.That(result, Is.EqualTo(Tuple.Create("added", _game)));
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace Net.RichardLord.AshTests.Core
             var system = new MockSystem((sys, action, game) => result = new Tuple<string, IGame>(action, (IGame) game));
             _game.AddSystem(system, 0);
             _game.RemoveSystem(system);
-            Assert.AreEqual(new Tuple<string, IGame>("removed", _game), result);
+            Assert.That(result, Is.EqualTo(Tuple.Create("removed", _game)));
         }
 
         [Test]
@@ -51,14 +51,14 @@ namespace Net.RichardLord.AshTests.Core
             var system = new MockSystem((sys, action, time) => result = new Tuple<string, object>(action, time));
             _game.AddSystem(system, 0);
             _game.Update(0.1);
-            Assert.AreEqual(new Tuple<string, object>("update", 0.1), result);
+            Assert.That(result, Is.EqualTo(new Tuple<string, object>("update", 0.1)));
         }
 
         [Test]
         public void DefaultPriorityIsZero()
         {
             var system = new MockSystem((sys, action, game) => { });
-            Assert.AreEqual(0, system.Priority);
+            Assert.That(system.Priority, Is.EqualTo(0));
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             var system = new MockSystem((sys, action, game) => { });
             _game.AddSystem(system, 10);
-            Assert.AreEqual(10, system.Priority);
+            Assert.That(system.Priority, Is.EqualTo(10));
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace Net.RichardLord.AshTests.Core
             result = new List<SystemBase>();
             _game.Update(0.1);
             var expected = new List<SystemBase> {_system1, _system2};
-            Assert.AreEqual(expected, result);
+            Assert.That(result, Is.EqualTo(expected));
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace Net.RichardLord.AshTests.Core
             result = new List<SystemBase>();
             _game.Update(0.1);
             var expected = new List<SystemBase> {_system1, _system2};
-            Assert.AreEqual(expected, result);
+            Assert.That(result, Is.EqualTo(expected));
         }
 
         [Test]
@@ -108,13 +108,13 @@ namespace Net.RichardLord.AshTests.Core
             result = new List<SystemBase>();
             _game.Update(0.1);
             var expected = new List<SystemBase> {_system2, _system1};
-            Assert.AreEqual(expected, result);
+            Assert.That(result, Is.EqualTo(expected));
         }
 
         [Test]
         public void UpdatingIsFalseBeforeUpdate()
         {
-            Assert.IsFalse(_game.Updating);
+            Assert.That(_game.Updating, Is.False);
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace Net.RichardLord.AshTests.Core
             var system = new MockSystem((sys, action, time) => updating = _game.Updating);
             _game.AddSystem(system, 0);
             _game.Update(0.1);
-            Assert.IsTrue(updating);
+            Assert.That(updating, Is.True);
         }
 
         [Test]
@@ -133,7 +133,7 @@ namespace Net.RichardLord.AshTests.Core
             var system = new MockSystem((sys, action, time) => { });
             _game.AddSystem(system, 0);
             _game.Update(0.1);
-            Assert.IsFalse(_game.Updating);
+            Assert.That(_game.Updating, Is.False);
         }
 
         [Test]
@@ -144,7 +144,7 @@ namespace Net.RichardLord.AshTests.Core
             var system = new MockSystem((sys, action, time) => { });
             _game.AddSystem(system, 0);
             _game.Update(0.1);
-            Assert.IsTrue(eventDispatched);            
+            Assert.That(eventDispatched, Is.True);            
         }
 
         [Test]
@@ -160,7 +160,7 @@ namespace Net.RichardLord.AshTests.Core
         public void GetSystemReturnsNullIfNoSuchSystem()
         {
             _game.AddSystem(new DummySystem(), 0);
-            Assert.IsNull(_game.GetSystem(typeof(MockSystem)));
+            Assert.That(_game.GetSystem(typeof(MockSystem)), Is.Null);
         }
 
         [Test]
@@ -172,7 +172,7 @@ namespace Net.RichardLord.AshTests.Core
             var expected = new Tuple<SystemBase, SystemBase>(null, null);
             var results = new Tuple<SystemBase, SystemBase>(_game.GetSystem(typeof (MockSystem)),
                                                             _game.GetSystem(typeof (DummySystem)));
-            Assert.AreEqual(expected, results);
+            Assert.That(results, Is.EqualTo(expected));
         }
 
         [Test]
@@ -187,7 +187,7 @@ namespace Net.RichardLord.AshTests.Core
             _game.Update(0.1);
             var expected = new Tuple<SystemBase, SystemBase>(null, null);
             var results = new Tuple<SystemBase, SystemBase>(_system2.Previous, _system1.Next);
-            Assert.AreEqual(expected, results);
+            Assert.That(results, Is.EqualTo(expected));
         }
     }
 }

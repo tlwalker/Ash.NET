@@ -36,7 +36,7 @@ namespace Net.RichardLord.AshTests.Core
                 MockFamily.Instances[0].NewEntityCalls,
                 MockFamily.Instances[1].NewEntityCalls
             };
-            Assert.AreEqual(new List<int> { 1, 1 },  results);
+            Assert.That(results, Is.All.EqualTo(1));
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace Net.RichardLord.AshTests.Core
                 MockFamily.Instances[0].RemoveEntityCalls,
                 MockFamily.Instances[1].RemoveEntityCalls
             };
-            Assert.AreEqual(new List<int> { 1, 1 }, results);
+            Assert.That(results, Is.All.EqualTo(1));
         }
 
         [Test]
@@ -70,7 +70,7 @@ namespace Net.RichardLord.AshTests.Core
                 MockFamily.Instances[0].RemoveEntityCalls,
                 MockFamily.Instances[1].RemoveEntityCalls
             };
-            Assert.AreEqual(new List<int> { 2, 2 }, results);
+            Assert.That(results, Is.All.EqualTo(2));
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace Net.RichardLord.AshTests.Core
                 MockFamily.Instances[0].ComponentAddedCalls,
                 MockFamily.Instances[1].ComponentAddedCalls
             };
-            Assert.AreEqual(new List<int> { 1, 1 }, results);
+            Assert.That(results, Is.All.EqualTo(1));
         }
 
         [Test]
@@ -103,14 +103,14 @@ namespace Net.RichardLord.AshTests.Core
                 MockFamily.Instances[0].ComponentRemovedCalls,
                 MockFamily.Instances[1].ComponentRemovedCalls
             };
-            Assert.AreEqual(new List<int> { 1, 1 }, results);
+            Assert.That(results, Is.All.EqualTo(1));
         }
 
         [Test]
         public void TestGetNodeListCreatesFamily()
         {
             _game.GetNodeList<MockNode>();
-            Assert.AreEqual(1, MockFamily.Instances.Count);
+            Assert.That(MockFamily.Instances, Is.Not.Empty);
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace Net.RichardLord.AshTests.Core
             _game.AddEntity(new Entity());
             _game.AddEntity(new Entity());
             _game.GetNodeList<MockNode>();
-            Assert.AreEqual(2, MockFamily.Instances[0].NewEntityCalls);
+            Assert.That(MockFamily.Instances[0].NewEntityCalls, Is.EqualTo(2));
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             _game.GetNodeList<MockNode>();
             _game.ReleaseNodeList<MockNode>();
-            Assert.AreEqual(1, MockFamily.Instances[0].CleanUpCalls);
+            Assert.That(MockFamily.Instances[0].CleanUpCalls, Is.EqualTo(1));
         }
 
         class MockNode : Node
