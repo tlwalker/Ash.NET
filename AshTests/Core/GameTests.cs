@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using Net.RichardLord.Ash.Core;
 using NUnit.Framework;
 namespace Net.RichardLord.AshTests.Core
@@ -137,7 +136,7 @@ namespace Net.RichardLord.AshTests.Core
 
         class MockNode2 : Node
         {
-            public Matrix Matrix { get; set; }
+            public MockMatrix MockMatrix { get; set; }
         }
     }
 }

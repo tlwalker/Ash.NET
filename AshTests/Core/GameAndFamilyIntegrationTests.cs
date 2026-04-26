@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using NUnit.Framework;
 using Net.RichardLord.Ash.Core;
 
@@ -39,14 +38,14 @@ namespace Net.RichardLord.AshTests.Core
         {
             var entity = new Entity();
             var point = new Point();
-            var matrix = new Matrix();
+             var matrix = new MockMatrix();
             entity.Add(point);
             entity.Add(matrix);
 			
             var nodes = _game.GetNodeList<MockNode>();
             _game.AddEntity(entity);
             var head = (MockNode) nodes.Head;
-            Assert.AreEqual(new List<object> {point, matrix}, new List<object> {head.Point, head.Matrix});
+            Assert.AreEqual(new List<object> {point, matrix}, new List<object> {head.Point, head.MockMatrix});
         }
 
         [Test]
@@ -54,7 +53,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             var entity = new Entity();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             var nodes = _game.GetNodeList<MockNode>();
             _game.AddEntity(entity);
             Assert.AreSame(entity, nodes.Head.Entity);
@@ -65,7 +64,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             var entity = new Entity();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             _game.AddEntity(entity);
             var nodes = _game.GetNodeList<MockNode>();
             Assert.AreSame(entity, nodes.Head.Entity);
@@ -78,7 +77,7 @@ namespace Net.RichardLord.AshTests.Core
             _game.AddEntity(entity);
             var nodes = _game.GetNodeList<MockNode>();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             Assert.AreSame(entity, nodes.Head.Entity);
         }
 		
@@ -105,7 +104,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             var entity = new Entity();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             _game.AddEntity(entity);
             var nodes = _game.GetNodeList<MockNode>();
             entity.Remove<Point>();
@@ -117,7 +116,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             var entity = new Entity();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             _game.AddEntity(entity);
             entity.Remove<Point>();
             var nodes = _game.GetNodeList<MockNode>();
@@ -129,7 +128,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             var entity = new Entity();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             _game.AddEntity(entity);
             var nodes = _game.GetNodeList<MockNode>();
             _game.RemoveEntity(entity);
@@ -141,7 +140,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             var entity = new Entity();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             _game.AddEntity(entity);
             _game.RemoveEntity(entity);
             var nodes = _game.GetNodeList<MockNode>();
@@ -156,7 +155,7 @@ namespace Net.RichardLord.AshTests.Core
             {
                 var entity = new Entity();
                 entity.Add(new Point());
-                entity.Add(new Matrix());
+                entity.Add(new MockMatrix());
                 entities.Add(entity);
                 _game.AddEntity(entity);
             }
@@ -179,7 +178,7 @@ namespace Net.RichardLord.AshTests.Core
             {
                 var entity = new Entity();
                 entity.Add(new Point());
-                entity.Add(new Matrix());
+                entity.Add(new MockMatrix());
                 entities.Add(entity);
                 _game.AddEntity(entity);
             }
@@ -198,7 +197,7 @@ namespace Net.RichardLord.AshTests.Core
         {
             var entity = new Entity();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             _game.AddEntity(entity);
             var nodes = _game.GetNodeList<MockNode>();
             _game.ReleaseNodeList<MockNode>();
@@ -213,7 +212,7 @@ namespace Net.RichardLord.AshTests.Core
             {
                 var entity = new Entity();
                 entity.Add(new Point());
-                entity.Add(new Matrix());
+                entity.Add(new MockMatrix());
                 entities.Add(entity);
                 _game.AddEntity(entity);
             }
@@ -229,11 +228,11 @@ namespace Net.RichardLord.AshTests.Core
         {
             var entity = new Entity();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             _game.AddEntity(entity);
             entity = new Entity();
             entity.Add(new Point());
-            entity.Add(new Matrix());
+            entity.Add(new MockMatrix());
             _game.AddEntity(entity);
             var nodes = _game.GetNodeList<MockNode>();
             _game.RemoveAllEntities();
@@ -243,7 +242,7 @@ namespace Net.RichardLord.AshTests.Core
         private class MockNode : Node
         {
             public Point Point { get; set; }
-            public Matrix Matrix { get; set; }
+            public MockMatrix MockMatrix { get; set; }
         }
     }
 }

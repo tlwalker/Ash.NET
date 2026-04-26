@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using NUnit.Framework;
 using Net.RichardLord.Ash.Core;
 
@@ -88,8 +87,8 @@ namespace Net.RichardLord.AshTests.Core
         public void TestNonMatchingEntityIsNotAddedWhenComponentAdded()
         {
             var entity = new Entity();
-            entity.Add(new Matrix());
-            _family.ComponentAddedToEntity(entity, typeof(Matrix));
+             entity.Add(new MockMatrix());
+             _family.ComponentAddedToEntity(entity, typeof(MockMatrix));
             var nodes = _family.NodeList;
             Assert.IsNull(nodes.Head);
         }

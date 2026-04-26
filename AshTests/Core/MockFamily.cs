@@ -3,6 +3,8 @@ using Net.RichardLord.Ash.Core;
 
 namespace  Net.RichardLord.AshTests.Core
 {
+    public class MockMatrix { }
+
     class MockFamily : IFamily
     {
         public static List<MockFamily> Instances = new List<MockFamily>();

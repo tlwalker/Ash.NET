@@ -1,200 +1,141 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+namespace Net.RichardLord.Ash.Core;
 
-namespace Net.RichardLord.Ash.Core
+/// <summary>
+/// A game entity is a collection object for components. Sometimes, the entities in a game
+/// will mirror the actual characters and objects in the game, but this is not necessary.
+/// </summary>
+public class Entity
 {
-    /**
-* A game entity is a collection object for components. Sometimes, the entities in a game
-* will mirror the actual characters and objects in the game, but this is not necessary.
-*
-* <p>Components are simple value objects that contain data relevant to the entity. Entities
-* with similar functionality will have instances of the same components. So we might have
-* a position component</p>
-*
-* <p><code>public class PositionComponent
-* {
-* public var x : Number;
-* public var y : Number;
-* }</code></p>
-*
-* <p>All entities that have a position in the game world, will have an instance of the
-* position component. Systems operate on entities based on the components they have.</p>
-*/
+    private readonly Dictionary<Type, object> _components = new();
 
-    public class Entity
+    /// <summary>
+    /// Optional, give the entity a name. This can help with debugging and with serialising the entity.
+    /// </summary>
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// This signal is dispatched when a component is added to the entity.
+    /// </summary>
+    internal event Action<Entity, Type>? ComponentAdded;
+
+    /// <summary>
+    /// This signal is dispatched when a component is removed from the entity.
+    /// </summary>
+    internal event Action<Entity, Type>? ComponentRemoved;
+
+    internal Entity? Previous { get; set; }
+    internal Entity? Next { get; set; }
+
+    internal Dictionary<Type, object> Components => _components;
+
+    public Entity()
     {
-        private readonly Dictionary<Type, object> _components;
+    }
 
-        /// <summary>
-        /// Optional, give the entity a name. This can help with debugging and with serialising the entity.
-        /// </summary>
-        public string Name { get; set; }
+    /// <summary>
+    /// Add a component to the entity.
+    /// </summary>
+    public Entity Add(object component)
+    {
+        AddComponentAndDispatchAddEvent(component, component.GetType());
+        return this;
+    }
 
-        /// <summary>
-        /// This signal is dispatched when a component is added to the entity.
-        /// </summary>
-        internal event Action<Entity, Type> ComponentAdded;
-
-        /// <summary>
-        /// This signal is dispatched when a component is removed from the entity.
-        /// </summary>
-        internal event Action<Entity, Type> ComponentRemoved;
-
-        internal Entity Previous { get; set; }
-        internal Entity Next { get; set; }
-
-        internal Dictionary<Type, object> Components
+    public Entity Add(object component, Type componentClass)
+    {
+        if (!componentClass.IsInstanceOfType(component))
         {
-            get { return _components; }
+            throw new InvalidOperationException($"Component is not an instance of {componentClass} or its parent types.");
+        }
+        AddComponentAndDispatchAddEvent(component, componentClass);
+        return this;
+    }
+
+    private Entity AddComponentAndDispatchAddEvent(object component, Type componentClass)
+    {
+        if (component is null)
+        {
+            throw new ArgumentNullException(nameof(component), "Component cannot be null.");
         }
 
-        public Entity()
+        if (_components.ContainsKey(componentClass))
         {
-            _components = new Dictionary<Type, object>();
+            _components.Remove(componentClass);
         }
 
-        /**
-        * Add a component to the entity.
-        *
-        * @param component The component object to add.
-        * @param componentClass The class of the component. This is only necessary if the component
-        * extends another component class and you want the framework to treat the component as of
-        * the base class type. If not set, the class type is determined directly from the component.
-        *
-        * @return A reference to the entity. This enables the chaining of calls to add, to make
-        * creating and configuring entities cleaner. e.g.
-        *
-        * <code>var entity : Entity = new Entity()
-        * .add( new Position( 100, 200 )
-        * .add( new Display( new PlayerClip() );</code>
-        */
+        _components[componentClass] = component;
 
-        public Entity Add(object component)
+        ComponentAdded?.Invoke(this, componentClass);
+        return this;
+    }
+
+    /// <summary>
+    /// Removes a component from the entity.
+    /// </summary>
+    public object? Remove<T>() => Remove(typeof(T));
+
+    public object? Remove(Type componentClass)
+    {
+        if (_components.TryGetValue(componentClass, out var component))
         {
-            AddComponentAndDispatchAddEvent(component, component.GetType());
-            return this;
+            _components.Remove(componentClass);
+            ComponentRemoved?.Invoke(this, componentClass);
+            return component;
         }
+        return null;
+    }
 
-        public Entity Add(object component, Type componentClass)
+    /// <summary>
+    /// Get a component from the entity.
+    /// </summary>
+    public object? Get(Type componentClass)
+    {
+        return _components.GetValueOrDefault(componentClass);
+    }
+
+    /// <summary>
+    /// Get a component from the entity.
+    /// </summary>
+    public T? Get<T>(Type componentClass)
+    {
+        return _components.TryGetValue(componentClass, out var value) ? (T)value : default;
+    }
+
+    /// <summary>
+    /// Get all components from the entity.
+    /// </summary>
+    public List<object> GetAll()
+    {
+        return [.. _components.Values];
+    }
+
+    /// <summary>
+    /// Does the entity have a component of a particular type.
+    /// </summary>
+    public bool Has(Type componentClass)
+    {
+        return _components.ContainsKey(componentClass);
+    }
+
+    /// <summary>
+    /// Make a copy of the entity
+    /// </summary>
+    public Entity Clone()
+    {
+        var copy = new Entity();
+        foreach (var (componentType, value) in _components)
         {
-            if (!componentClass.IsInstanceOfType(component))
+            var clonedComponent = Activator.CreateInstance(componentType);
+            if (clonedComponent is not null)
             {
-                throw new InvalidOperationException("Component is not an instance of " + componentClass +
-                                                    " or its parent types.");
-            }
-            AddComponentAndDispatchAddEvent(component, componentClass);
-            return this;
-        }
-
-        private Entity AddComponentAndDispatchAddEvent(object component, Type componentClass)
-        {
-            if (component == null)
-            {
-                throw new NullReferenceException("Component cannot be null.");
-            }
-
-            if (_components.ContainsKey(componentClass))
-            {
-                _components.Remove(componentClass);
-            }
-
-            _components[componentClass] = component;
-
-            if (ComponentAdded != null) { ComponentAdded(this, componentClass); }
-            return this;
-        }
-
-        /// <summary>
-        /// Removes a component from the entity.
-        /// </summary>
-        /// <param name="componentClass">The class of the component to be removed.</param>
-        /// <returns>The component, or null if the component doesn't exist in the entity.</returns>        
-        public object Remove<T>()
-        {
-            return Remove(typeof(T));
-        }
-
-        public object Remove(Type componentClass)
-        {
-            if (_components.ContainsKey(componentClass))
-            {
-                var component = _components[componentClass];
-                _components.Remove(componentClass);
-                if (ComponentRemoved != null) { ComponentRemoved(this, componentClass); }
-                return component;
-            }
-            return null;
-        }
-
-        /**
-        * Get a component from the entity.
-        *
-        * @param componentClass The class of the component requested.
-        * @return The component, or null if none was found.
-        */
-
-        public object Get(Type componentClass)
-        {
-            return _components.ContainsKey(componentClass) ? _components[componentClass] : null;
-        }
-
-        /**
-        * Get a component from the entity.
-        *
-        * @param componentClass The class of the component requested.
-        * @return The component, or null if none was found.
-        */
-
-        public T Get<T>(Type componentClass)
-        {
-            return _components.ContainsKey(componentClass) ? (T)_components[componentClass] : default(T);
-        }
-
-		/**
-		 * Get all components from the entity.
-		 * 
-		 * @return An array containing all the components that are on the entity.
-		 */
-		public List<object> GetAll()
-		{
-		    return _components.Values.ToList();
-		}
-
-        /**
-        * Does the entity have a component of a particular type.
-        *
-        * @param componentClass The class of the component sought.
-        * @return true if the entity has a component of the type, false if not.
-        */
-
-        public bool Has(Type componentClass)
-        {
-            return _components.ContainsKey(componentClass);
-        }
-
-        /**
-        * Make a copy of the entity
-        *
-        * @return A new entity with new components that are copies of the components on the
-        * original entity.
-        */
-
-        public Entity Clone()
-        {
-            var copy = new Entity();
-            foreach (var component in _components)
-            {
-                var componentType = component.Key;
-                var clonedComponent = Activator.CreateInstance(componentType);
-                foreach (var property in componentType.GetProperties().Where(property => property.CanRead && property.CanWrite))
+                foreach (var property in componentType.GetProperties().Where(p => p.CanRead && p.CanWrite))
                 {
-                    property.SetValue(clonedComponent, property.GetValue(component.Value, null), null);
+                    property.SetValue(clonedComponent, property.GetValue(value, null), null);
                 }
-                copy.Add(clonedComponent, component.Key);
+                copy.Add(clonedComponent, componentType);
             }
-
-            return copy;
         }
+
+        return copy;
     }
 }
